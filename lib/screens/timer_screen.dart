@@ -19,7 +19,7 @@ class TimerScreen extends StatefulWidget {
 class _TimerScreenState extends State<TimerScreen> {
   FocusPeriod? currentFocus;
   Duration? timeLeft = const Duration(seconds: 5);
-  late Timer ticker;
+  Timer? ticker;
   int currentPeriod = // 0, 2, 4, 6 are the four focus periods.
       0; //1, 3, 5 are short breaks. 7 is a long break.
 
@@ -36,8 +36,16 @@ class _TimerScreenState extends State<TimerScreen> {
               onTap: () {
                 playPauseTimer();
               },
-              child: const Icon(
-                CupertinoIcons.hourglass,
+              child: Icon(
+                ticker == null
+                    ? CupertinoIcons.hourglass_bottomhalf_fill
+                    : ticker!.isActive
+                        ? CupertinoIcons.hourglass
+                        : currentPeriod == 1 ||
+                                currentPeriod == 3 ||
+                                currentPeriod == 5
+                            ? CupertinoIcons.hourglass_tophalf_fill
+                            : CupertinoIcons.hourglass_bottomhalf_fill,
                 size: 300,
               ),
             ),
@@ -45,20 +53,31 @@ class _TimerScreenState extends State<TimerScreen> {
               timeLeft != null ? getDurationString(timeLeft!) : '25:00',
               style: kTimerCounterStyle,
             ),
-            CupertinoButton(
-              child: const Text(
-                'Studying',
-                style: TextStyle(color: kPrimaryColor77),
-              ),
-              onPressed: () {
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) {
-                    return const ChangeCategoryMenu();
-                  },
-                );
-              },
-            ),
+            currentPeriod == 1 ||
+                    currentPeriod == 3 ||
+                    currentPeriod == 5 ||
+                    currentPeriod == 7
+                ? CupertinoButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'Break',
+                      style: TextStyle(color: kPrimaryColor77),
+                    ),
+                  )
+                : CupertinoButton(
+                    child: const Text(
+                      'Studying',
+                      style: TextStyle(color: kPrimaryColor77),
+                    ),
+                    onPressed: () {
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) {
+                          return const ChangeCategoryMenu();
+                        },
+                      );
+                    },
+                  ),
           ],
         ),
       ),
@@ -81,8 +100,8 @@ class _TimerScreenState extends State<TimerScreen> {
       timeLeft = currentFocus!.duration;
       countDown();
     } else {
-      if (ticker.isActive) {
-        ticker.cancel();
+      if (ticker != null && ticker!.isActive) {
+        ticker!.cancel();
       } else {
         countDown();
       }
@@ -94,7 +113,6 @@ class _TimerScreenState extends State<TimerScreen> {
       setState(() {
         if (timeLeft!.inSeconds <= 0) {
           timer.cancel();
-          print(currentPeriod);
           currentPeriod = (currentPeriod + 1) % 7;
           timeLeft = currentPeriod == 0 ||
                   currentPeriod == 2 ||

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:focus_bits/constants.dart';
 import 'package:focus_bits/screens/account.dart';
@@ -7,6 +8,8 @@ import 'package:focus_bits/screens/timer_screen.dart';
 class Home extends StatelessWidget {
   Home({Key? key}) : super(key: key);
 
+  User? currentUser = FirebaseAuth.instance.currentUser;
+
   final List<Widget> tabViews = [
     const TimerScreen(),
     const StatsScreen(),
@@ -15,27 +18,30 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoTabScaffold(
-      tabBar: CupertinoTabBar(
-        inactiveColor: kInactiveBottomBarItemColor,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.hourglass),
-            label: 'Timer',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.chart_pie),
-            label: 'Stats',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.person),
-            label: 'Account',
-          ),
-        ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: CupertinoTabScaffold(
+        tabBar: CupertinoTabBar(
+          inactiveColor: kInactiveBottomBarItemColor,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.hourglass),
+              label: 'Timer',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.chart_pie),
+              label: 'Stats',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.person),
+              label: 'Account',
+            ),
+          ],
+        ),
+        tabBuilder: (context, index) {
+          return tabViews[index];
+        },
       ),
-      tabBuilder: (context, index) {
-        return tabViews[index];
-      },
     );
   }
 }

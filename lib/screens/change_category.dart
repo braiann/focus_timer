@@ -21,10 +21,11 @@ class ChangeCategoryMenu extends StatelessWidget {
               ),
               onPressed: () {
                 showCupertinoModalPopup(
-                    context: context,
-                    builder: (context) {
-                      return const NewCategoryMenu();
-                    });
+                  context: context,
+                  builder: (context) {
+                    return const NewCategoryMenu();
+                  },
+                );
               }),
           SizedBox(
             height: 100,

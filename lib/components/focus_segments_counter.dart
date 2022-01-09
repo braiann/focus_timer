@@ -28,7 +28,7 @@ class FocusSegmentsCounter extends StatelessWidget {
           padding: const EdgeInsets.all(5.0),
           child: Icon(
             currentPeriod > 2
-                ? CupertinoIcons.star_fill
+                ? CupertinoIcons.capsule_fill
                 : CupertinoIcons.circle_fill,
             color: currentPeriod > 1 ? kPrimaryColor : kPrimaryColor22,
             size: 10,
