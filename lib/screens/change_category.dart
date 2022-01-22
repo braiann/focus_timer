@@ -1,13 +1,24 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:focus_bits/models/category.dart';
 import 'package:focus_bits/screens/new_category.dart';
 
-class ChangeCategoryMenu extends StatelessWidget {
-  const ChangeCategoryMenu({
+class ChangeCategoryMenu extends StatefulWidget {
+  ChangeCategoryMenu({
     Key? key,
+    required this.categories,
   }) : super(key: key);
 
+  List<Category> categories;
+
+  @override
+  State<ChangeCategoryMenu> createState() => _ChangeCategoryMenuState();
+}
+
+class _ChangeCategoryMenuState extends State<ChangeCategoryMenu> {
   @override
   Widget build(BuildContext context) {
+    Category selectedCategory = widget.categories.first;
     return CupertinoActionSheet(
       title: const Text('Change Category'),
       message: Column(
@@ -19,13 +30,18 @@ class ChangeCategoryMenu extends StatelessWidget {
                   Text('New Category'),
                 ],
               ),
-              onPressed: () {
-                showCupertinoModalPopup(
+              onPressed: () async {
+                Category? result = await showCupertinoModalPopup(
                   context: context,
                   builder: (context) {
                     return const NewCategoryMenu();
                   },
                 );
+                if (result != null) {
+                  setState(() {
+                    widget.categories.add(result);
+                  });
+                }
               }),
           SizedBox(
             height: 100,
@@ -33,50 +49,32 @@ class ChangeCategoryMenu extends StatelessWidget {
               itemExtent: 30,
               useMagnifier: true,
               magnification: 1.2,
-              onSelectedItemChanged: (value) {},
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(CupertinoIcons.book_solid),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Text('Study'),
-                  ],
+              onSelectedItemChanged: (value) {
+                SystemSound.play(SystemSoundType.click);
+                HapticFeedback.lightImpact();
+                selectedCategory = widget.categories[value];
+              },
+              children: List.generate(
+                widget.categories.length,
+                (index) => Text(
+                  widget.categories[index].name,
+                  style: TextStyle(color: widget.categories[index].color),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(CupertinoIcons.briefcase_fill),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Text('Work'),
-                  ],
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(CupertinoIcons.device_laptop),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Text('Code'),
-                  ],
-                ),
-              ],
+              ),
             ),
           )
         ],
       ),
       actions: [
         CupertinoActionSheetAction(
-          onPressed: () {
-            Navigator.pop(context);
-          },
           child: const Text('OK'),
           isDefaultAction: true,
+          onPressed: () {
+            Navigator.pop(
+              context,
+              selectedCategory,
+            );
+          },
         )
       ],
       cancelButton: CupertinoActionSheetAction(

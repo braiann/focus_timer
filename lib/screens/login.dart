@@ -55,9 +55,8 @@ class Login extends StatelessWidget {
               child: const Text('Continue'),
               onPressed: () async {
                 try {
-                  UserCredential userCredential = await FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: email!, password: password!);
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: email!, password: password!);
                   Navigator.push(
                     context,
                     CupertinoPageRoute(
@@ -65,10 +64,7 @@ class Login extends StatelessWidget {
                     ),
                   );
                 } on FirebaseAuthException catch (e) {
-                  print(e.code);
-                } catch (e) {
-                  print(e);
-                }
+                } catch (e) {}
               },
             ),
           ],

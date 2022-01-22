@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:focus_bits/components/text_field.dart';
@@ -59,13 +60,19 @@ class Signup extends StatelessWidget {
                   UserCredential userCredential = await FirebaseAuth.instance
                       .createUserWithEmailAndPassword(
                           email: email, password: password);
+                  FirebaseFirestore firestore = FirebaseFirestore.instance;
+                  DocumentReference user =
+                      await firestore.collection('users').add({"email": email});
+                  user.collection('categories').add({
+                    'name': 'General',
+                    'color': 'gray',
+                    'icon': 'circle_fill',
+                    'goal': 50,
+                  });
                   Navigator.push(context,
                       CupertinoPageRoute(builder: (context) => Home()));
                 } on FirebaseAuthException catch (e) {
-                  print(e.code);
-                } catch (e) {
-                  print(e);
-                }
+                } catch (e) {}
               },
             ),
           ],

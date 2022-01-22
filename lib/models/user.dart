@@ -1,5 +1,6 @@
-class User {
+class CurrentUser {
+  String id;
   String email;
 
-  User({required this.email});
+  CurrentUser({required this.id, required this.email});
 }

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:focus_bits/constants.dart';
 import 'package:focus_bits/screens/account.dart';
@@ -8,11 +7,9 @@ import 'package:focus_bits/screens/timer_screen.dart';
 class Home extends StatelessWidget {
   Home({Key? key}) : super(key: key);
 
-  User? currentUser = FirebaseAuth.instance.currentUser;
-
   final List<Widget> tabViews = [
     const TimerScreen(),
-    const StatsScreen(),
+    StatsScreen(),
     const AccountScreen(),
   ];
 
